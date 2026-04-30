@@ -530,21 +530,25 @@ const VisitSection = () => {
 const OrderBar = () => (
   <div className="order-bar">
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <div className="pulse" />
+      {IS_OPEN && <div className="pulse" />}
       <div>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.7 }}>OPEN NOW</div>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>UNTIL 9 PM · USUALLY A WAIT</div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.7 }}>
+          {IS_OPEN ? "OPEN NOW" : "CLOSED"}
+        </div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>
+          {IS_OPEN ? "UNTIL 9 PM · USUALLY A WAIT" : "OPENS 11 AM DAILY"}
+        </div>
       </div>
     </div>
     <div style={{ display: "flex", gap: 8 }}>
       <a
         href="tel:+12065551234"
         className="btn-ghost"
-        style={{ borderColor: "currentColor", color: "inherit", padding: "10px 14px", fontSize: 11, textDecoration: "none" }}
+        style={{ borderColor: "currentColor", color: "inherit", padding: "12px 14px", fontSize: 11, textDecoration: "none" }}
       >
         Call (206) 555-1234
       </a>
-      <button className="btn-primary" style={{ background: "var(--accent)", color: "var(--ink)", padding: "12px 20px", fontSize: 12 }}>
+      <button className="btn-primary" style={{ background: "var(--accent)", color: "var(--ink)", padding: "14px 20px", fontSize: 12 }}>
         Order online →
       </button>
     </div>

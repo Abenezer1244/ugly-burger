@@ -104,27 +104,36 @@ const TopNav = ({ navigate, page }) => (
     </div>
     <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 40, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
       {[
-        { label: "Home",    action: () => navigate('home') },
-        { label: "Menu",    action: () => navigate('menu') },
-        { label: "Reviews", action: () => {
+        { label: "Home",    pageKey: "home",  action: () => navigate('home') },
+        { label: "Menu",    pageKey: "menu",  action: () => navigate('menu') },
+        { label: "Reviews", pageKey: "home",  action: () => {
           if (page === 'home') {
             document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
           } else {
             navigate('home');
           }
         }},
-        { label: "About",   action: () => navigate('about') },
-        { label: "Visit",   action: () => navigate('visit') },
-      ].map(({ label, action }) => (
-        <a
-          key={label}
-          href="#"
-          onClick={e => { e.preventDefault(); action(); }}
-          style={{ textDecoration: "none", color: "inherit", opacity: 0.85 }}
-        >
-          {label}
-        </a>
-      ))}
+        { label: "About",   pageKey: "about", action: () => navigate('about') },
+        { label: "Visit",   pageKey: "visit", action: () => navigate('visit') },
+      ].map(({ label, pageKey, action }) => {
+        const isActive = page === pageKey;
+        return (
+          <a
+            key={label}
+            href="#"
+            onClick={e => { e.preventDefault(); action(); }}
+            style={{
+              textDecoration: "none",
+              color: isActive ? "var(--accent)" : "inherit",
+              opacity: isActive ? 1 : 0.8,
+              borderBottom: isActive ? "2px solid var(--accent)" : "2px solid transparent",
+              paddingBottom: 2,
+            }}
+          >
+            {label}
+          </a>
+        );
+      })}
     </div>
     <button className="btn-ghost" style={{ padding: "10px 16px" }}>
       Order Online →

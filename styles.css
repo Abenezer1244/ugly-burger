@@ -228,6 +228,7 @@
   transition: background 150ms ease, color 150ms ease, transform 200ms ease;
 }
 .btn-ghost:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+.topnav .btn-ghost { min-height: 44px; }  /* override inline padding that undersizes the nav CTA */
 
 /* Scroll hint */
 .scroll-hint {
@@ -271,6 +272,11 @@
   color: inherit;
   text-decoration: none;
   transition: color 150ms ease;
+  padding: 14px 0;          /* 14px × 2 + 16px line-height ≈ 44px touch target */
+  display: inline-block;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 .topnav a:hover {
   color: var(--accent);

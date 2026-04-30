@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ugly Burger — Variations</title>
+<link rel="stylesheet" href="verge.css" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  html, body { margin: 0; height: 100%; }
+
+  /* The artboard variations are static "snapshots" — disable sticky
+     and force the burger stage to a normal block with a fixed
+     in-page progress so we can present each direction without scroll. */
+  .uglysite-static .scroll-stage {
+    height: auto !important;
+  }
+  .uglysite-static .sticky-frame {
+    position: relative !important;
+    top: auto !important;
+    height: 100vh;
+  }
+  /* Hide the live order bar in static previews — they don't need it floating */
+  .uglysite-static .order-bar { position: relative; bottom: auto; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="burger.jsx"></script>
+<script type="text/babel" src="site.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+// A scaled-down site preview — fixes a width and lets users scroll the artboard.
+const Variation = ({ theme, accent, bg, headline, progress = 0 }) => (
+  <div className="uglysite-static" style={{ width: "100%", height: "100%", overflow: "auto" }}>
+    <window.UglySite
+      theme={theme}
+      accentOverride={accent}
+      bgOverride={bg}
+      headline={headline}
+      forceProgress={progress}
+      showLabels={true}
+      intensity={1}
+    />
+  </div>
+);
+
+const ARTBOARD_W = 1280;
+const ARTBOARD_H = 1800;
+
+const App = () => {
+  return (
+    <window.DesignCanvas>
+      <window.DCSection id="hero-explosions" title="Hero — at peak explosion" subtitle="Same site, three aesthetic directions. Each shows the burger fully exploded mid-scroll.">
+        <window.DCArtboard id="diner" label="A · Diner cream + ketchup" width={ARTBOARD_W} height={ARTBOARD_H}>
+          <Variation theme="diner" accent="#d4321a" bg="#f3ead4" headline="So ugly. So good." progress={0.5} />
+        </window.DCArtboard>
+        <window.DCArtboard id="verge" label="B · Verge black + mint" width={ARTBOARD_W} height={ARTBOARD_H}>
+          <Variation theme="verge" accent="#3cffd0" bg="#131313" headline="No pretty burgers." progress={0.5} />
+        </window.DCArtboard>
+        <window.DCArtboard id="paper" label="C · Paper white + mustard" width={ARTBOARD_W} height={ARTBOARD_H}>
+          <Variation theme="checker" accent="#f5b840" bg="#fffdf6" headline="Best burger. Worst photo." progress={0.5} />
+        </window.DCArtboard>
+      </window.DCSection>
+
+      <window.DCSection id="hero-states" title="Hero — assembled vs exploded" subtitle="Variant A at scroll = 0% (assembled, intro) and 95% (CTA, reassembled).">
+        <window.DCArtboard id="diner-rest" label="A · Assembled (start)" width={ARTBOARD_W} height={1080}>
+          <Variation theme="diner" accent="#d4321a" bg="#f3ead4" headline="So ugly. So good." progress={0.02} />
+        </window.DCArtboard>
+        <window.DCArtboard id="diner-cta" label="A · Reassembled (CTA)" width={ARTBOARD_W} height={1080}>
+          <Variation theme="diner" accent="#d4321a" bg="#f3ead4" headline="So ugly. So good." progress={0.95} />
+        </window.DCArtboard>
+      </window.DCSection>
+
+      <window.DCPostIt x={40} y={40}>
+        Three aesthetic directions on the same scroll-linked exploded-burger site. Open any artboard fullscreen with the ↗ icon. The full live scrollytelling experience is in <strong>Ugly Burger.html</strong> with Tweaks for accent, background, headline, intensity and scroll speed.
+      </window.DCPostIt>
+    </window.DesignCanvas>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

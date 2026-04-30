@@ -1,0 +1,325 @@
+/* ============================================================
+   VERGE DESIGN SYSTEM — colors & type
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap');
+
+:root {
+  /* ---------- COLORS — Primary Hazards ---------- */
+  --jelly-mint: #3cffd0;
+  --verge-ultraviolet: #5200ff;
+
+  /* ---------- COLORS — Secondary & Accent ---------- */
+  --console-mint-border: #309875;
+  --deep-link-blue: #3860be;
+  --focus-cyan: #1eaedb;
+  --purple-rule: #3d00bf;
+
+  /* ---------- COLORS — Surface ---------- */
+  --canvas-black: #131313;
+  --surface-slate: #2d2d2d;
+  --image-frame: #313131;
+  --hazard-white: #ffffff;
+  --absolute-black: #000000;
+
+  /* ---------- COLORS — Story Tile Fills ---------- */
+  --tile-mint: #3cffd0;
+  --tile-purple: #5200ff;
+  --tile-yellow: #ffe14b;
+  --tile-pink: #ff7ac6;
+  --tile-orange: #ff6b35;
+  --tile-electric-blue: #2b3cff;
+  --tile-white: #ffffff;
+  --tile-slate: #2d2d2d;
+
+  /* ---------- COLORS — Text ---------- */
+  --fg-primary: #ffffff;
+  --fg-secondary: #949494;
+  --fg-muted: #e9e9e9;
+  --fg-inverted: #131313;
+
+  /* ---------- COLORS — Semantic / States ---------- */
+  --focus-ring: #1eaedb;
+  --overlay-black: rgba(0, 0, 0, 0.33);
+  --hover-translucent: rgba(255, 255, 255, 0.2);
+  --pressed-gray: rgba(140, 140, 140, 0.87);
+  --dim-gray: #8c8c8c;
+
+  /* ---------- TYPE — Families ---------- */
+  --font-display: 'Anton', 'Manuka', Impact, Helvetica, sans-serif;
+  --font-sans: 'Space Grotesk', 'PolySans', Helvetica, Arial, sans-serif;
+  --font-mono: 'Space Mono', 'PolySans Mono', 'Courier New', Courier, monospace;
+  --font-serif: 'Newsreader', 'FK Roman Standard', Georgia, serif;
+
+  /* ---------- TYPE — Display (Manuka substitute: Anton) ---------- */
+  /* line-heights loosened from 0.80 → 0.92 per substitute guidance */
+  --display-hero-size: 6.69rem;       /* 107px */
+  --display-hero-lh: 0.92;
+  --display-hero-tracking: 1.07px;
+
+  --display-secondary-size: 5.63rem;  /* 90px */
+  --display-secondary-lh: 0.92;
+
+  --display-tertiary-size: 3.75rem;   /* 60px */
+  --display-tertiary-lh: 0.95;
+
+  /* ---------- TYPE — Headlines ---------- */
+  --headline-large-size: 2.13rem;     /* 34px */
+  --headline-wide-size: 2.00rem;      /* 32px */
+  --headline-wide-tracking: 0.32px;
+  --headline-medium-size: 1.50rem;    /* 24px */
+  --headline-small-size: 1.25rem;     /* 20px */
+
+  /* ---------- TYPE — Labels & Eyebrows ---------- */
+  --label-light-cap-size: 1.19rem;    /* 19px — fashion-whisper */
+  --label-light-cap-tracking: 1.9px;
+  --label-allcaps-xl-size: 1.13rem;   /* 18px */
+  --label-allcaps-xl-tracking: 1.8px;
+
+  /* ---------- TYPE — Body ---------- */
+  --body-bold-size: 1rem;             /* 16px */
+  --body-relaxed-size: 1rem;          /* 16px */
+  --body-relaxed-lh: 1.6;
+  --body-compact-size: 0.81rem;       /* 13px */
+  --inline-label-size: 0.94rem;       /* 15px */
+  --inline-label-tracking: 0.15px;
+
+  /* ---------- TYPE — Microtext ---------- */
+  --eyebrow-size: 0.75rem;            /* 12px */
+  --eyebrow-tracking: 1.8px;
+  --tag-size: 0.75rem;
+  --tag-tracking: 0.72px;
+  --caption-micro-size: 0.69rem;      /* 11px */
+  --caption-micro-tracking: 1.1px;
+  --meta-nano-size: 0.63rem;          /* 10px */
+  --meta-nano-tracking: 1.5px;
+
+  /* ---------- TYPE — Mono ---------- */
+  --mono-button-size: 0.75rem;        /* 12px */
+  --mono-button-lh: 2.0;
+  --mono-button-tracking: 1.5px;
+  --mono-timestamp-size: 0.69rem;     /* 11px */
+  --mono-timestamp-tracking: 1.1px;
+
+  /* ---------- TYPE — Serif ---------- */
+  --serif-body-size: 1rem;
+  --serif-body-lh: 1.3;
+  --serif-body-tracking: -0.16px;
+  --serif-caption-size: 1.25rem;
+
+  /* ---------- SPACING ---------- */
+  --s-1: 1px;
+  --s-2: 2px;
+  --s-4: 4px;
+  --s-5: 5px;
+  --s-6: 6px;
+  --s-8: 8px;
+  --s-10: 10px;
+  --s-12: 12px;
+  --s-14: 14px;
+  --s-16: 16px;
+  --s-20: 20px;
+  --s-24: 24px;
+  --s-32: 32px;
+  --s-40: 40px;
+  --s-48: 48px;
+  --s-64: 64px;
+
+  /* ---------- RADII ---------- */
+  --r-2: 2px;
+  --r-3: 3px;
+  --r-4: 4px;
+  --r-20: 20px;
+  --r-24: 24px;
+  --r-30: 30px;
+  --r-40: 40px;
+  --r-circle: 50%;
+
+  /* ---------- ELEVATION (1px hairlines, no shadows) ---------- */
+  --hairline-white: inset 0 0 0 1px var(--hazard-white);
+  --hairline-mint: inset 0 0 0 1px var(--jelly-mint);
+  --hairline-uv: inset 0 0 0 1px var(--verge-ultraviolet);
+  --hairline-frame: inset 0 0 0 1px var(--image-frame);
+  --atmospheric-ring: 0 0 0 1px var(--overlay-black);
+  --tab-active-mint: inset 0 -1px 0 0 var(--jelly-mint);
+
+  /* ---------- MOTION ---------- */
+  --ease: 180ms ease;
+  --ease-fast: 150ms ease;
+}
+
+/* ============================================================
+   SEMANTIC TYPE CLASSES
+   ============================================================ */
+
+.t-display-hero {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--display-hero-size);
+  line-height: var(--display-hero-lh);
+  letter-spacing: var(--display-hero-tracking);
+  text-transform: uppercase;
+}
+.t-display-secondary {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--display-secondary-size);
+  line-height: var(--display-secondary-lh);
+  text-transform: uppercase;
+}
+.t-display-tertiary {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--display-tertiary-size);
+  line-height: var(--display-tertiary-lh);
+  text-transform: uppercase;
+}
+
+.t-headline-large {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--headline-large-size);
+  line-height: 1.0;
+}
+.t-headline-wide {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--headline-wide-size);
+  line-height: 1.1;
+  letter-spacing: var(--headline-wide-tracking);
+}
+.t-headline-medium {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--headline-medium-size);
+  line-height: 1.0;
+}
+.t-headline-small {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--headline-small-size);
+  line-height: 1.0;
+}
+
+.t-whisper {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--label-light-cap-size);
+  line-height: 1.2;
+  letter-spacing: var(--label-light-cap-tracking);
+  text-transform: uppercase;
+}
+.t-label-xl {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--label-allcaps-xl-size);
+  line-height: 1.1;
+  letter-spacing: var(--label-allcaps-xl-tracking);
+  text-transform: uppercase;
+}
+
+.t-body-bold {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--body-bold-size);
+  line-height: 1.0;
+}
+.t-body {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--body-relaxed-size);
+  line-height: var(--body-relaxed-lh);
+}
+.t-body-compact {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--body-compact-size);
+  line-height: 1.6;
+}
+.t-inline-label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--inline-label-size);
+  line-height: 1.2;
+  letter-spacing: var(--inline-label-tracking);
+}
+
+.t-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--eyebrow-size);
+  line-height: 1.3;
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+}
+.t-tag {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--tag-size);
+  line-height: 1.2;
+  letter-spacing: var(--tag-tracking);
+  text-transform: uppercase;
+}
+.t-caption-micro {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--caption-micro-size);
+  line-height: 1.2;
+  letter-spacing: var(--caption-micro-tracking);
+  text-transform: uppercase;
+}
+.t-meta-nano {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--meta-nano-size);
+  line-height: 1.4;
+  letter-spacing: var(--meta-nano-tracking);
+  text-transform: uppercase;
+}
+
+.t-mono-button {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--mono-button-size);
+  line-height: var(--mono-button-lh);
+  letter-spacing: var(--mono-button-tracking);
+  text-transform: uppercase;
+}
+.t-mono-timestamp {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--mono-timestamp-size);
+  line-height: 1.2;
+  letter-spacing: var(--mono-timestamp-tracking);
+  text-transform: uppercase;
+}
+
+.t-serif-body {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--serif-body-size);
+  line-height: var(--serif-body-lh);
+  letter-spacing: var(--serif-body-tracking);
+}
+.t-serif-caption {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: var(--serif-caption-size);
+  line-height: 1.2;
+}
+
+/* ============================================================
+   GLOBAL DEFAULTS
+   ============================================================ */
+html, body {
+  background: var(--canvas-black);
+  color: var(--fg-primary);
+  font-family: var(--font-sans);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; text-decoration: none; transition: color var(--ease-fast); }
+a:hover { color: var(--deep-link-blue); }
+*, *::before, *::after { box-sizing: border-box; }

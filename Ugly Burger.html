@@ -4,6 +4,45 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ugly Burger — So ugly. So good.</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FastFoodRestaurant",
+  "name": "Ugly Burger",
+  "description": "Small-menu smashburger spot in Shoreline, WA. Quarter-pound fresh beef on potato buns with Ugly Sauce.",
+  "url": "https://uglyburger.com",
+  "telephone": "+12065551234",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "19939 Ballinger Way NE B",
+    "addressLocality": "Shoreline",
+    "addressRegion": "WA",
+    "postalCode": "98155",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 47.7559,
+    "longitude": -122.3310
+  },
+  "servesCuisine": ["American", "Burgers"],
+  "priceRange": "$$",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "11:00",
+      "closes": "21:00"
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "143"
+  }
+}
+</script>
+<!-- TODO: Set ordering platform URL. Search for "Order online" in site.jsx and update href/onClick. Providers: DoorDash, Square Online, Toast, Slice. -->
 <link rel="stylesheet" href="verge.css" />
 <link rel="stylesheet" href="styles.css" />
 <style>

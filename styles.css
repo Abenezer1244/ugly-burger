@@ -78,36 +78,6 @@
   to { transform: translateX(-50%); }
 }
 
-/* ============================================================
-   SCROLLYTELLING HERO
-   ============================================================ */
-.scroll-stage {
-  position: relative;
-  height: 460vh;       /* extended scroll time */
-}
-.scroll-stage.short { height: 360vh; }
-
-.sticky-frame {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Burger stage */
-.burger-stage {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  perspective: 1400px;
-}
 
 .burger-svg {
   width: min(70vh, 90vw);
@@ -116,50 +86,6 @@
   transform-style: preserve-3d;
 }
 
-/* Each ingredient layer */
-.ing {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform-origin: center center;
-  will-change: transform;
-}
-
-/* Ingredient label callout */
-.ing-label {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--ink);
-  white-space: nowrap;
-  pointer-events: none;
-}
-.ing-label::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 1px;
-  background: var(--ink);
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-/* Hero text overlays */
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-.hero-text {
-  position: absolute;
-  pointer-events: none;
-}
 
 /* Display type — extra brutal */
 .shout {
@@ -230,32 +156,6 @@
 .btn-ghost:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
 .topnav .btn-ghost { min-height: 44px; }  /* override inline padding that undersizes the nav CTA */
 
-/* Scroll hint */
-.scroll-hint {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  opacity: 0.6;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.scroll-hint .bar {
-  width: 1px;
-  height: 30px;
-  background: currentColor;
-  animation: bob 1.6s ease-in-out infinite;
-  transform-origin: top;
-}
-@keyframes bob {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.4); }
-}
 
 /* Top nav */
 .topnav {
@@ -406,14 +306,6 @@
   100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
 }
 
-/* Numbered framing */
-.frame-num {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--ink-soft);
-}
 
 /* Big about quote */
 .bigquote {
@@ -547,3 +439,32 @@
   --paper: #ffffff;
   --rule: rgba(0, 0, 0, 0.2);
 }
+
+/* Keyboard focus */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .strip-track { animation: none; }
+  .order-bar .pulse { animation: none; }
+  .pg-img-wrap img,
+  .btn-primary,
+  .btn-ghost,
+  .review-card { transition: none; }
+}
+
+/* Ensure accent-background buttons use paper (white) text for WCAG AA contrast */
+.btn-primary[style*="var(--accent)"],
+.btn-primary.accent-bg {
+  color: var(--paper) !important;
+}
+.uglysite.theme-verge .order-bar .btn-primary { color: #131313; }

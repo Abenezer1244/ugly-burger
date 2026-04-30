@@ -3,6 +3,12 @@
 
 const { useState, useEffect, useRef, useMemo } = React;
 
+// Runtime open/today detection
+const _now = new Date();
+const _todayName = _now.toLocaleString('en-US', { weekday: 'long' });
+const _hour = _now.getHours();
+const IS_OPEN = _hour >= 11 && _hour < 21;
+
 // ===== DATA =====
 const MENU = {
   burgers: [
@@ -39,7 +45,7 @@ const MENU = {
 const REVIEWS = [
   { quote: "So so ugly… but so so good.", author: "Rashaad F.", source: "Local Guide · 15 reviews", stars: 5 },
   { quote: "I love how fresh everything tastes! The flavors are amazing, and the burgers are always juicy and satisfying.", author: "Carter S.", source: "Local Guide · 11 reviews", stars: 5 },
-  { quote: "The ‘Ugly Sauce’ is incredible — they seriously need to bottle it.", author: "L.R. L.", source: "Local Guide · 235 reviews", stars: 5 },
+  { quote: "The 'Ugly Sauce' is incredible — they seriously need to bottle it.", author: "L.R. L.", source: "Local Guide · 235 reviews", stars: 5 },
   { quote: "Best garlic fries I have ever had. A labor of love.", author: "Grant K.", source: "Local Guide · 15 reviews", stars: 5 },
   { quote: "I won the burger lottery. One of the best burgers I've eaten — and probably the very best fries I've had.", author: "Trygve O.", source: "Local Guide · 22 reviews", stars: 5 },
   { quote: "Structural integrity is not what you get a burger like this for.", author: "Peter R.", source: "4 reviews", stars: 5 },
@@ -47,38 +53,45 @@ const REVIEWS = [
   { quote: "For a second I lost consciousness mid bite and thought I was the divine incarnate.", author: "jaymilli 4really", source: "Local Guide · 44 reviews", stars: 5 },
 ];
 
-// ===== HOOK: scroll progress for an element =====
-const useElementScrollProgress = (ref) => {
-  const [progress, setProgress] = useState(0);
+// ===== ROUTER =====
+const useRouter = () => {
+  const getPage = () => {
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('p');
+    return ['menu', 'about', 'visit'].includes(p) ? p : 'home';
+  };
+  const [page, setPage] = useState(getPage);
+
+  const navigate = React.useCallback((to) => {
+    const url = to === 'home'
+      ? window.location.pathname
+      : `${window.location.pathname}?p=${to}`;
+    window.history.pushState({ page: to }, '', url);
+    setPage(to);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      if (total <= 0) {
-        setProgress(0);
-        return;
-      }
-      const scrolled = -rect.top;
-      const p = Math.max(0, Math.min(1, scrolled / total));
-      setProgress(p);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [ref]);
-  return progress;
+    const handler = (e) => setPage(e.state?.page || getPage());
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
+
+  return { page, navigate };
 };
 
 // ===== TOP NAV =====
-const TopNav = () => (
+const TopNav = ({ navigate, page }) => (
   <div className="topnav">
-    <div className="brand">
+    <a
+      href="#main-content"
+      style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden", zIndex: 999 }}
+      onFocus={e => { e.target.style.left = "16px"; e.target.style.width = "auto"; e.target.style.height = "auto"; e.target.style.overflow = "visible"; e.target.style.background = "var(--accent)"; e.target.style.color = "var(--paper)"; e.target.style.padding = "8px 16px"; e.target.style.borderRadius = "4px"; }}
+      onBlur={e => { e.target.style.left = "-9999px"; e.target.style.width = "1px"; e.target.style.height = "1px"; e.target.style.overflow = "hidden"; }}
+    >
+      Skip to content
+    </a>
+    <div className="brand" onClick={() => navigate('home')} style={{ cursor: "pointer" }}>
       <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
         <circle cx="14" cy="10" r="9" fill="currentColor" />
         <rect x="3" y="14" width="22" height="6" rx="3" fill="currentColor" />
@@ -89,11 +102,29 @@ const TopNav = () => (
       </svg>
       UGLY BURGER
     </div>
-    <div className="nav-links" style={{ display: "flex", gap: 28, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
-      <a href="#menu">Menu</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#about">About</a>
-      <a href="#visit">Visit</a>
+    <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 40, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
+      {[
+        { label: "Home",    action: () => navigate('home') },
+        { label: "Menu",    action: () => navigate('menu') },
+        { label: "Reviews", action: () => {
+          if (page === 'home') {
+            document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            navigate('home');
+          }
+        }},
+        { label: "About",   action: () => navigate('about') },
+        { label: "Visit",   action: () => navigate('visit') },
+      ].map(({ label, action }) => (
+        <a
+          key={label}
+          href="#"
+          onClick={e => { e.preventDefault(); action(); }}
+          style={{ textDecoration: "none", color: "inherit", opacity: 0.85 }}
+        >
+          {label}
+        </a>
+      ))}
     </div>
     <button className="btn-ghost" style={{ padding: "10px 16px" }}>
       Order Online →
@@ -101,111 +132,89 @@ const TopNav = () => (
   </div>
 );
 
-// ===== HERO STAGE =====
-const HeroStage = ({ headline, showLabels, intensity, scrollMult, forceProgress }) => {
-  const stageRef = useRef(null);
-  const rawProgress = useElementScrollProgress(stageRef);
-  // scrollMult shifts the curve — higher = explosion happens faster
-  const progress = forceProgress != null
-    ? forceProgress
-    : Math.max(0, Math.min(1, rawProgress * scrollMult));
+// ===== HOME HERO (full-bleed image) =====
+const HeroSection = ({ headline, navigate }) => (
+  <section
+    id="main-content"
+    style={{
+      position: "relative",
+      height: "calc(100vh - 73px)",
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "flex-end",
+    }}
+  >
+    <img
+      src="o (6).jpg"
+      alt=""
+      aria-hidden="true"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    />
+    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,5,2,0.86) 0%, rgba(10,5,2,0.45) 55%, rgba(10,5,2,0.08) 100%)" }} />
 
-  // 4 text beats fade in/out
-  const beat = (center, width = 0.18) => {
-    const d = Math.abs(progress - center);
-    return Math.max(0, 1 - d / width);
-  };
-
-  const beat0 = beat(0.05, 0.18);   // hero
-  const beat1 = beat(0.32, 0.16);   // message 1
-  const beat2 = beat(0.6, 0.16);    // message 2
-  const beat3 = beat(0.92, 0.18);   // CTA
-
-  const stageHeight = scrollMult >= 1.2 ? "short" : "";
-
-  return (
-    <div ref={stageRef} className={`scroll-stage ${stageHeight}`}>
-      <div className="sticky-frame">
-        {/* Burger */}
-        <div className="burger-stage">
-          <window.Burger progress={progress} showLabels={showLabels} intensity={intensity} />
-        </div>
-
-        {/* Frame numbers (top corners) */}
-        <div style={{ position: "absolute", top: 16, left: 24, display: "flex", gap: 16, alignItems: "center" }}>
-          <span className="frame-num">FRAME {String(Math.round(progress * 47)).padStart(3, "0")} / 047</span>
-          <span style={{ width: 1, height: 12, background: "var(--ink-soft)" }} />
-          <span className="frame-num">VOL.01 — SHORELINE WA</span>
-        </div>
-        <div style={{ position: "absolute", top: 16, right: 24 }}>
-          <span className="frame-num">SCROLL_LINKED · {Math.round(progress * 100)}%</span>
-        </div>
-
-        {/* Beat 0 — HERO (top + bottom split, leaves middle for burger) */}
-        <div style={{ position: "absolute", inset: 0, opacity: beat0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "10vh 24px 12vh", pointerEvents: "none" }}>
-          <div style={{ textAlign: "center" }}>
-            <div className="eyebrow" style={{ marginBottom: 14 }}>
-              <span className="kicker-rule">EST. 2025 · SHORELINE WA · UNOFFICIAL</span>
-            </div>
-            <h1 className="shout" style={{ fontSize: "clamp(56px, 11vw, 160px)", margin: 0, color: "var(--ink)" }}>
-              {headline}
-            </h1>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div className="t-whisper" style={{ fontSize: 14, fontWeight: 300, letterSpacing: 3, color: "var(--ink)" }}>
-              ¼ LB SMASHED · POTATO BUN · UGLY SAUCE
-            </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: 2, marginTop: 10, color: "var(--ink-soft)", textTransform: "uppercase" }}>
-              Scroll to disassemble ↓
-            </div>
-          </div>
-        </div>
-
-        {/* Beat 1 — left aligned, mid disassembly */}
-        <div style={{ position: "absolute", left: "5vw", top: "20vh", maxWidth: 380, opacity: beat1, transform: `translateY(${(1 - beat1) * 20}px)` }}>
-          <div className="eyebrow" style={{ marginBottom: 14, color: "var(--accent)" }}>※ 01 / DISASSEMBLY</div>
-          <div className="shout" style={{ fontSize: "clamp(36px, 5vw, 64px)", color: "var(--ink)" }}>
-            Eight parts. <br /> One mess.
-          </div>
-          <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, lineHeight: 1.4, marginTop: 16, color: "var(--ink-soft)" }}>
-            Every Ugly Burger comes apart in your hands. We just decided to lean into it.
-          </p>
-        </div>
-
-        {/* Beat 2 — right aligned, fully exploded */}
-        <div style={{ position: "absolute", right: "5vw", bottom: "18vh", maxWidth: 420, textAlign: "right", opacity: beat2, transform: `translateY(${(1 - beat2) * 20}px)` }}>
-          <div className="eyebrow" style={{ marginBottom: 14, color: "var(--accent)" }}>02 / FIELD GUIDE ※</div>
-          <div className="shout" style={{ fontSize: "clamp(36px, 5vw, 64px)", color: "var(--ink)" }}>
-            Look at every <br /> stupid layer.
-          </div>
-          <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, lineHeight: 1.4, marginTop: 16, color: "var(--ink-soft)" }}>
-            ¼ lb fresh beef. Potato bun. Lettuce, tomato, onion, pickle. Ugly sauce on contact.
-          </p>
-        </div>
-
-        {/* Beat 3 — CTA */}
-        <div className="hero-overlay" style={{ opacity: beat3 }}>
-          <div style={{ textAlign: "center", maxWidth: 720, padding: "0 24px", pointerEvents: beat3 > 0.5 ? "auto" : "none" }}>
-            <div className="eyebrow" style={{ marginBottom: 14, color: "var(--accent)" }}>03 / REASSEMBLED</div>
-            <div className="shout" style={{ fontSize: "clamp(48px, 9vw, 130px)", color: "var(--ink)", marginBottom: 28 }}>
-              Now eat it.
-            </div>
-            <div style={{ display: "inline-flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-              <button className="btn-primary">Order online</button>
-              <button className="btn-ghost">See the menu ↓</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll hint — fades after first move */}
-        <div className="scroll-hint" style={{ opacity: progress < 0.05 ? 0.6 : 0 }}>
-          <span>Scroll</span>
-          <div className="bar" />
-        </div>
+    <div style={{ position: "relative", zIndex: 1, padding: "clamp(40px, 6vw, 80px) clamp(24px, 5vw, 80px)", width: "100%", maxWidth: 920 }}>
+      <div className="eyebrow" style={{ marginBottom: 20 }}>
+        <span className="kicker-rule" style={{ color: "var(--accent)", borderColor: "var(--accent)" }}>EST. 2025 · SHORELINE WA</span>
+      </div>
+      <h1 className="shout" style={{ fontSize: "clamp(60px, 10vw, 130px)", color: "#fff", margin: "0 0 24px", lineHeight: 0.88 }}>
+        {headline}
+      </h1>
+      <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 20, lineHeight: 1.4, color: "rgba(255,255,255,0.82)", maxWidth: 480, margin: "0 0 32px" }}>
+        Quarter-pound fresh beef, smashed on a flat-top. Potato bun. Ugly Sauce. No pretty burgers.
+      </p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+        <button className="btn-primary">Order online</button>
+        <button
+          className="btn-ghost"
+          onClick={() => navigate('menu')}
+          style={{ borderColor: "rgba(255,255,255,0.55)", color: "#fff" }}
+        >
+          See the menu →
+        </button>
+      </div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {["Counter service", "Open daily 11–9", "Shoreline WA"].map(t => (
+          <span key={t} className="chip" style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.75)" }}>{t}</span>
+        ))}
       </div>
     </div>
-  );
-};
+  </section>
+);
+
+// ===== PAGE HERO (for Menu / About / Visit pages) =====
+const PageHero = ({ title, subtitle, image, eyebrow }) => (
+  <div
+    id="main-content"
+    style={{
+      position: "relative",
+      height: "clamp(320px, 55vh, 540px)",
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "flex-end",
+    }}
+  >
+    <img
+      src={image}
+      alt=""
+      aria-hidden="true"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    />
+    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,5,2,0.88) 0%, rgba(10,5,2,0.45) 55%, rgba(10,5,2,0.08) 100%)" }} />
+    <div style={{ position: "relative", zIndex: 1, padding: "clamp(32px, 5vw, 64px) clamp(24px, 5vw, 80px)" }}>
+      {eyebrow && (
+        <div className="eyebrow" style={{ marginBottom: 14 }}>
+          <span className="kicker-rule" style={{ color: "var(--accent)", borderColor: "var(--accent)" }}>{eyebrow}</span>
+        </div>
+      )}
+      <h1 className="shout" style={{ fontSize: "clamp(54px, 9vw, 110px)", color: "#fff", margin: 0, lineHeight: 0.9 }}>{title}</h1>
+      {subtitle && (
+        <p style={{ color: "rgba(255,255,255,0.72)", fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, marginTop: 14, maxWidth: 480 }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  </div>
+);
 
 // ===== PHOTO GALLERY =====
 const PHOTOS = [
@@ -300,10 +309,12 @@ const MenuSection = () => {
         </div>
 
         <div>
-          <div style={{ display: "flex", gap: 4, marginBottom: 8, borderBottom: "1.5px solid var(--ink)", flexWrap: "wrap" }}>
+          <div role="tablist" aria-label="Menu categories" style={{ display: "flex", gap: 4, marginBottom: 8, borderBottom: "1.5px solid var(--ink)", flexWrap: "wrap" }}>
             {tabs.map(t => (
               <button
                 key={t.id}
+                role="tab"
+                aria-selected={tab === t.id}
                 onClick={() => setTab(t.id)}
                 style={{
                   padding: "16px 20px",
@@ -325,7 +336,7 @@ const MenuSection = () => {
             ))}
           </div>
 
-          <div>
+          <div role="tabpanel" aria-label={tabs.find(t => t.id === tab)?.label}>
             {MENU[tab].map((item, i) => (
               <div key={i} className="menu-row">
                 <span className="menu-num">{item.num}</span>
@@ -390,7 +401,7 @@ const ReviewsWall = () => {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
           {REVIEWS.map((r, i) => (
             <div key={i} className="review-card" style={{ "--tilt": `${(i % 2 === 0 ? -1 : 1) * (i % 3 + 0.5)}deg` }}>
-              <div className="stars">★★★★★</div>
+              <div className="stars" aria-label="5 out of 5 stars">★★★★★</div>
               <p className="review-quote">"{r.quote}"</p>
               <div className="review-meta">
                 <span>{r.author}</span>
@@ -445,14 +456,14 @@ const AboutSection = () => (
 // ===== LOCATION + HOURS =====
 const VisitSection = () => {
   const days = [
-    { d: "Monday", h: "11 AM – 9 PM" },
-    { d: "Tuesday", h: "11 AM – 9 PM" },
+    { d: "Monday",    h: "11 AM – 9 PM" },
+    { d: "Tuesday",   h: "11 AM – 9 PM" },
     { d: "Wednesday", h: "11 AM – 9 PM" },
-    { d: "Thursday", h: "11 AM – 9 PM", today: true },
-    { d: "Friday", h: "11 AM – 9 PM" },
-    { d: "Saturday", h: "11 AM – 9 PM" },
-    { d: "Sunday", h: "11 AM – 9 PM" },
-  ];
+    { d: "Thursday",  h: "11 AM – 9 PM" },
+    { d: "Friday",    h: "11 AM – 9 PM" },
+    { d: "Saturday",  h: "11 AM – 9 PM" },
+    { d: "Sunday",    h: "11 AM – 9 PM" },
+  ].map(d => ({ ...d, today: d.d === _todayName }));
   return (
     <section id="visit" style={{ background: "var(--ink)", color: "var(--bg)", padding: "80px 0", borderTop: "1.5px solid var(--ink)" }}>
       <div className="container">
@@ -487,7 +498,7 @@ const VisitSection = () => {
               ))}
             </div>
             <div style={{ marginTop: 16, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--accent-2)" }}>
-              ● OPEN NOW · USUALLY A WAIT
+              {IS_OPEN ? "● OPEN NOW · USUALLY A WAIT" : "○ CLOSED · OPENS 11 AM"}
             </div>
           </div>
           <div>
@@ -517,9 +528,13 @@ const OrderBar = () => (
       </div>
     </div>
     <div style={{ display: "flex", gap: 8 }}>
-      <button className="btn-ghost" style={{ borderColor: "currentColor", color: "inherit", padding: "10px 14px", fontSize: 11 }}>
-        Call (206) ███-████
-      </button>
+      <a
+        href="tel:+12065551234"
+        className="btn-ghost"
+        style={{ borderColor: "currentColor", color: "inherit", padding: "10px 14px", fontSize: 11, textDecoration: "none" }}
+      >
+        Call (206) 555-1234
+      </a>
       <button className="btn-primary" style={{ background: "var(--accent)", color: "var(--ink)", padding: "12px 20px", fontSize: 12 }}>
         Order online →
       </button>
@@ -539,38 +554,77 @@ const Footer = () => (
       </div>
       <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", textAlign: "right", color: "var(--ink-soft)" }}>
         © 2026 UGLY BURGER LLC<br />
-        SHORELINE, WA · MADE WITH GREASE<br />
-        UNOFFICIAL FAN MICROSITE
+        SHORELINE, WA · MADE WITH GREASE
       </div>
     </div>
   </footer>
 );
 
+// ===== PAGE LAYOUTS =====
+const HomePage = ({ headline, navigate }) => (
+  <>
+    <HeroSection headline={headline} navigate={navigate} />
+    <MarqueeStrip />
+    <PhotoGallery />
+    <ReviewsWall />
+  </>
+);
+
+const MenuPage = () => (
+  <>
+    <PageHero
+      title="The Menu"
+      eyebrow="WHAT WE MAKE"
+      image="o.jpg"
+      subtitle="Eight burgers. Three shakes. One sauce we're not telling you about."
+    />
+    <MenuSection />
+  </>
+);
+
+const AboutPage = () => (
+  <>
+    <PageHero
+      title="Our Story"
+      eyebrow="WHO WE ARE"
+      image="o (3).jpg"
+      subtitle="A small family-run smashburger spot that opened in Shoreline and immediately ruined everyone's lunch budget."
+    />
+    <AboutSection />
+  </>
+);
+
+const VisitPage = () => (
+  <>
+    <PageHero
+      title="Come Get It"
+      eyebrow="FIND US"
+      image="o (11).jpg"
+      subtitle="19939 Ballinger Way NE B, Shoreline WA 98155 · Open every day 11 AM – 9 PM"
+    />
+    <VisitSection />
+  </>
+);
+
 // ===== ROOT SITE =====
 const UglySite = ({
-  theme = "diner",          // "diner" | "verge" | "checker"
-  accentOverride,            // optional CSS color
-  bgOverride,                // optional CSS color
-  showLabels = true,
-  intensity = 1,
-  scrollMult = 1,
+  theme = "diner",
+  accentOverride,
+  bgOverride,
   headline = "So ugly. So good.",
-  forceProgress,             // for static previews
 }) => {
+  const { page, navigate } = useRouter();
   const style = {};
   if (accentOverride) style["--accent"] = accentOverride;
   if (bgOverride) style["--bg"] = bgOverride;
 
   return (
     <div className={`uglysite theme-${theme}`} style={style}>
-      <TopNav />
-      <HeroStage headline={headline} showLabels={showLabels} intensity={intensity} scrollMult={scrollMult} forceProgress={forceProgress} />
-      <MarqueeStrip />
-      <PhotoGallery />
-      <MenuSection />
-      <ReviewsWall />
-      <AboutSection />
-      <VisitSection />
+      <TopNav navigate={navigate} page={page} />
+      {page === 'home'  && <HomePage  headline={headline} navigate={navigate} />}
+      {page === 'menu'  && <MenuPage  />}
+      {page === 'about' && <AboutPage />}
+      {page === 'visit' && <VisitPage />}
       <Footer />
       <OrderBar />
     </div>

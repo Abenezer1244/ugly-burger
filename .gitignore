@@ -1,0 +1,7 @@
+screenshots/
+take-screenshots.js
+node_modules/
+package.json
+package-lock.json
+.gstack/
+.claude/

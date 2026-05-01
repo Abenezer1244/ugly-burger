@@ -62,13 +62,19 @@ const useRouter = () => {
   };
   const [page, setPage] = useState(getPage);
 
-  const navigate = React.useCallback((to) => {
+  const navigate = React.useCallback((to, scrollTarget = null) => {
     const url = to === 'home'
       ? window.location.pathname
       : `${window.location.pathname}?p=${to}`;
     window.history.pushState({ page: to }, '', url);
     setPage(to);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (scrollTarget) {
+      setTimeout(() => {
+        document.getElementById(scrollTarget)?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }, []);
 
   useEffect(() => {
@@ -81,65 +87,97 @@ const useRouter = () => {
 };
 
 // ===== TOP NAV =====
-const TopNav = ({ navigate, page }) => (
-  <div className="topnav">
-    <a
-      href="#main-content"
-      style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden", zIndex: 999 }}
-      onFocus={e => { e.target.style.left = "16px"; e.target.style.width = "auto"; e.target.style.height = "auto"; e.target.style.overflow = "visible"; e.target.style.background = "var(--accent)"; e.target.style.color = "var(--paper)"; e.target.style.padding = "8px 16px"; e.target.style.borderRadius = "4px"; }}
-      onBlur={e => { e.target.style.left = "-9999px"; e.target.style.width = "1px"; e.target.style.height = "1px"; e.target.style.overflow = "hidden"; }}
-    >
-      Skip to content
-    </a>
-    <div className="brand" onClick={() => navigate('home')} style={{ cursor: "pointer" }}>
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
-        <circle cx="14" cy="10" r="9" fill="currentColor" />
-        <rect x="3" y="14" width="22" height="6" rx="3" fill="currentColor" />
-        <rect x="5" y="20" width="18" height="4" rx="2" fill="currentColor" />
-        <circle cx="10" cy="8" r="1" fill="var(--bg)" />
-        <circle cx="16" cy="6" r="1" fill="var(--bg)" />
-        <circle cx="19" cy="10" r="1" fill="var(--bg)" />
-      </svg>
-      UGLY BURGER
-    </div>
-    <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 40, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
-      {[
-        { label: "Home",    pageKey: "home",  action: () => navigate('home') },
-        { label: "Menu",    pageKey: "menu",  action: () => navigate('menu') },
-        { label: "Reviews", pageKey: "home",  action: () => {
-          if (page === 'home') {
-            document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
-          } else {
-            navigate('home');
+const TopNav = ({ navigate, page, overlay }) => {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const close = () => setMobileOpen(false);
+
+  const links = [
+    { label: "Home",    pageKey: "home",  action: () => { navigate('home'); close(); } },
+    { label: "Menu",    pageKey: "menu",  action: () => { navigate('menu'); close(); } },
+    { label: "Reviews", pageKey: "home",  action: () => {
+      if (page === 'home') { document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' }); }
+      else { navigate('home', 'reviews'); }
+      close();
+    }},
+    { label: "About",   pageKey: "about", action: () => { navigate('about'); close(); } },
+    { label: "Visit",   pageKey: "visit", action: () => { navigate('visit'); close(); } },
+  ];
+
+  const navStyle = overlay
+    ? { position: "absolute", top: 0, left: 0, right: 0, border: "none", color: "#fff" }
+    : { border: "none" };
+
+  return (
+    <>
+      <div className="topnav" style={navStyle}>
+        <a
+          href="#main-content"
+          style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden", zIndex: 999 }}
+          onFocus={e => { e.target.style.left = "16px"; e.target.style.width = "auto"; e.target.style.height = "auto"; e.target.style.overflow = "visible"; e.target.style.background = "var(--accent)"; e.target.style.color = "var(--paper)"; e.target.style.padding = "8px 16px"; e.target.style.borderRadius = "4px"; }}
+          onBlur={e => { e.target.style.left = "-9999px"; e.target.style.width = "1px"; e.target.style.height = "1px"; e.target.style.overflow = "hidden"; }}
+        >
+          Skip to content
+        </a>
+        <div className="brand" onClick={() => navigate('home')} style={{ cursor: "pointer", color: "var(--accent)" }}>
+          <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+            <circle cx="14" cy="10" r="9" fill="currentColor" />
+            <rect x="3" y="14" width="22" height="6" rx="3" fill="currentColor" />
+            <rect x="5" y="20" width="18" height="4" rx="2" fill="currentColor" />
+            <circle cx="10" cy="8" r="1" fill="var(--bg)" />
+            <circle cx="16" cy="6" r="1" fill="var(--bg)" />
+            <circle cx="19" cy="10" r="1" fill="var(--bg)" />
+          </svg>
+          UGLY BURGER
+        </div>
+
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 64, fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
+          {links.map(({ label, pageKey, action }) => {
+            const isActive = page === pageKey;
+            return (
+              <a key={label} href="#" onClick={e => { e.preventDefault(); action(); }}
+                style={{ textDecoration: "none", color: isActive ? "var(--accent)" : "inherit", opacity: isActive ? 1 : 0.8, borderBottom: isActive ? "2px solid var(--accent)" : "2px solid transparent", paddingBottom: 2 }}>
+                {label}
+              </a>
+            );
+          })}
+        </div>
+
+        <button className="btn-primary nav-order-btn" style={{ background: "var(--accent)", color: "#fff" }}>
+          Order Online →
+        </button>
+
+        <button
+          className="nav-hamburger"
+          onClick={() => setMobileOpen(o => !o)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          style={{ color: overlay ? "#fff" : "var(--ink)" }}
+        >
+          {mobileOpen
+            ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/><line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            : <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect y="4" width="24" height="2.5" rx="1.25" fill="currentColor"/><rect y="11" width="24" height="2.5" rx="1.25" fill="currentColor"/><rect y="18" width="24" height="2.5" rx="1.25" fill="currentColor"/></svg>
           }
-        }},
-        { label: "About",   pageKey: "about", action: () => navigate('about') },
-        { label: "Visit",   pageKey: "visit", action: () => navigate('visit') },
-      ].map(({ label, pageKey, action }) => {
-        const isActive = page === pageKey;
-        return (
-          <a
-            key={label}
-            href="#"
-            onClick={e => { e.preventDefault(); action(); }}
-            style={{
-              textDecoration: "none",
-              color: isActive ? "var(--accent)" : "inherit",
-              opacity: isActive ? 1 : 0.8,
-              borderBottom: isActive ? "2px solid var(--accent)" : "2px solid transparent",
-              paddingBottom: 2,
-            }}
-          >
-            {label}
-          </a>
-        );
-      })}
-    </div>
-    <button className="btn-ghost" style={{ padding: "10px 16px" }}>
-      Order Online →
-    </button>
-  </div>
-);
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation menu">
+          <nav className="mobile-nav-links">
+            {links.map(({ label, pageKey, action }) => (
+              <a key={label} href="#" onClick={e => { e.preventDefault(); action(); }}
+                className={page === pageKey ? "active" : ""}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          <button className="btn-primary" onClick={close} style={{ background: "var(--accent)", color: "#fff", width: "100%", justifyContent: "center", fontSize: 16, padding: "20px 28px" }}>
+            Order Online →
+          </button>
+        </div>
+      )}
+    </>
+  );
+};
 
 // ===== HOME HERO (full-bleed image) =====
 const HeroSection = ({ headline, navigate }) => (
@@ -147,14 +185,14 @@ const HeroSection = ({ headline, navigate }) => (
     id="main-content"
     style={{
       position: "relative",
-      height: "calc(100vh - 73px)",
+      height: "100vh",
       overflow: "hidden",
       display: "flex",
       alignItems: "flex-end",
     }}
   >
     <img
-      src="o (6).jpg"
+      src="o (5).jpg"
       alt=""
       aria-hidden="true"
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
@@ -172,7 +210,7 @@ const HeroSection = ({ headline, navigate }) => (
         Quarter-pound fresh beef, smashed on a flat-top. Potato bun. Ugly Sauce. No pretty burgers.
       </p>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-        <button className="btn-primary">Order online</button>
+        <button className="btn-primary" style={{ background: "var(--accent)", color: "#fff" }}>Order Online →</button>
         <button
           className="btn-ghost"
           onClick={() => navigate('menu')}
@@ -298,8 +336,8 @@ const MenuSection = () => {
 
   return (
     <section id="menu" className="container" style={{ paddingTop: 80, paddingBottom: 80 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.4fr)", gap: 64, alignItems: "start" }}>
-        <div style={{ position: "sticky", top: 80 }}>
+      <div className="menu-section-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.4fr)", gap: 64, alignItems: "start" }}>
+        <div className="menu-section-sticky" style={{ position: "sticky", top: 80 }}>
           <div className="eyebrow" style={{ marginBottom: 16 }}>
             <span className="kicker-rule">SECTION / 01 — THE LIST</span>
           </div>
@@ -318,7 +356,7 @@ const MenuSection = () => {
         </div>
 
         <div>
-          <div role="tablist" aria-label="Menu categories" style={{ display: "flex", gap: 4, marginBottom: 8, borderBottom: "1.5px solid var(--ink)", flexWrap: "wrap" }}>
+          <div role="tablist" aria-label="Menu categories" className="menu-tabs" style={{ display: "flex", gap: 4, marginBottom: 8, borderBottom: "1.5px solid var(--ink)" }}>
             {tabs.map(t => (
               <button
                 key={t.id}
@@ -512,7 +550,7 @@ const VisitSection = () => {
           </div>
           <div>
             <h3 className="shout" style={{ fontSize: "clamp(40px, 5vw, 64px)", margin: "0 0 24px" }}>The price</h3>
-            <div className="shout" style={{ fontSize: 96, lineHeight: 1, color: "var(--accent)", margin: 0 }}>$10–20</div>
+            <div className="shout visit-price" style={{ fontSize: 96, lineHeight: 1, color: "var(--accent)", margin: 0 }}>$10–20</div>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", marginTop: 8 }}>
               Per person · 53 people reported
             </p>
@@ -548,8 +586,8 @@ const OrderBar = () => (
       >
         Call (206) 555-1234
       </a>
-      <button className="btn-primary" style={{ background: "var(--accent)", color: "var(--ink)", padding: "14px 20px", fontSize: 12 }}>
-        Order online →
+      <button className="btn-primary" style={{ background: "var(--accent)", color: "#fff", padding: "14px 20px", fontSize: 12 }}>
+        Order Online →
       </button>
     </div>
   </div>
@@ -633,7 +671,7 @@ const UglySite = ({
 
   return (
     <div className={`uglysite theme-${theme}`} style={style}>
-      <TopNav navigate={navigate} page={page} />
+      <TopNav navigate={navigate} page={page} overlay />
       {page === 'home'  && <HomePage  headline={headline} navigate={navigate} />}
       {page === 'menu'  && <MenuPage  />}
       {page === 'about' && <AboutPage />}

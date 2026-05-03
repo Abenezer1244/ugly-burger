@@ -5,6 +5,8 @@
 /* Theme variables (overridden per-artboard via inline style) */
 :root {
   --bg: #f3ead4;          /* cream */
+  --pulse-color: #4ade80;
+  --pulse-glow: rgba(74, 222, 128, 0.7);
   --bg-alt: #e8dcb8;      /* darker cream */
   --ink: #1a1411;         /* warm near-black */
   --ink-soft: #4a3a30;
@@ -296,14 +298,19 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  background: var(--pulse-color);
+  box-shadow: 0 0 0 0 var(--pulse-glow);
   animation: pulse 1.6s infinite;
 }
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-  70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  0% { box-shadow: 0 0 0 0 var(--pulse-glow); }
+  70% { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.hero-height {
+  height: 100vh;
+  height: 100dvh;
 }
 
 
@@ -515,6 +522,8 @@
   --rule: rgba(255, 255, 255, 0.18);
   --check-a: #131313;
   --check-b: #2d2d2d;
+  --pulse-color: #3cffd0;
+  --pulse-glow: rgba(60, 255, 208, 0.7);
 }
 .uglysite.theme-verge .btn-ghost:hover { color: var(--ink-soft); }
 .uglysite.theme-verge .review-card { background: #1c1c1c; border-color: #ffffff; }

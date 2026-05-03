@@ -1,6 +1,10 @@
 // site.jsx — Ugly Burger marketing site. Exposes <UglySite /> on window.
 // Expects window.Burger from burger.jsx and the styles.css theme classes.
 
+// TODO: Replace with your real ordering platform URL (DoorDash, Square, Toast, etc.)
+const ORDER_URL = null;
+const openOrder = () => { if (ORDER_URL) window.open(ORDER_URL, '_blank', 'noopener'); };
+
 const { useState, useEffect, useRef, useMemo } = React;
 
 // Runtime open/today detection
@@ -118,7 +122,7 @@ const TopNav = ({ navigate, page, overlay }) => {
         >
           Skip to content
         </a>
-        <div className="brand" onClick={() => navigate('home')} style={{ cursor: "pointer", color: "var(--accent)" }}>
+        <button className="brand" onClick={() => navigate('home')} aria-label="Ugly Burger — go to home page" style={{ cursor: "pointer", color: "var(--accent)", background: "none", border: "none", padding: 0 }}>
           <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
             <circle cx="14" cy="10" r="9" fill="currentColor" />
             <rect x="3" y="14" width="22" height="6" rx="3" fill="currentColor" />
@@ -128,7 +132,7 @@ const TopNav = ({ navigate, page, overlay }) => {
             <circle cx="19" cy="10" r="1" fill="var(--bg)" />
           </svg>
           UGLY BURGER
-        </div>
+        </button>
 
         <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 64, fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
           {links.map(({ label, pageKey, action }) => {
@@ -142,7 +146,7 @@ const TopNav = ({ navigate, page, overlay }) => {
           })}
         </div>
 
-        <button className="btn-primary nav-order-btn" style={{ background: "var(--accent)", color: "#fff" }}>
+        <button className="btn-primary nav-order-btn" onClick={openOrder} style={{ background: "var(--accent)", color: "#fff" }}>
           Order Online →
         </button>
 
@@ -170,7 +174,7 @@ const TopNav = ({ navigate, page, overlay }) => {
               </a>
             ))}
           </nav>
-          <button className="btn-primary" onClick={close} style={{ background: "var(--accent)", color: "#fff", width: "100%", justifyContent: "center", fontSize: 16, padding: "20px 28px" }}>
+          <button className="btn-primary" onClick={() => { openOrder(); close(); }} style={{ background: "var(--accent)", color: "#fff", width: "100%", justifyContent: "center", fontSize: 16, padding: "20px 28px" }}>
             Order Online →
           </button>
         </div>
@@ -183,9 +187,9 @@ const TopNav = ({ navigate, page, overlay }) => {
 const HeroSection = ({ headline, navigate }) => (
   <section
     id="main-content"
+    className="hero-height"
     style={{
       position: "relative",
-      height: "100vh",
       overflow: "hidden",
       display: "flex",
       alignItems: "flex-end",
@@ -201,16 +205,16 @@ const HeroSection = ({ headline, navigate }) => (
 
     <div style={{ position: "relative", zIndex: 1, padding: "clamp(40px, 6vw, 80px) clamp(24px, 5vw, 80px)", width: "100%", maxWidth: 920 }}>
       <div className="eyebrow" style={{ marginBottom: 20 }}>
-        <span className="kicker-rule" style={{ color: "var(--accent)", borderColor: "var(--accent)" }}>EST. 2025 · SHORELINE WA</span>
+        <span className="kicker-rule" style={{ color: "var(--accent)", borderColor: "var(--accent)" }}>SMASHBURGERS · SHORELINE, WA</span>
       </div>
       <h1 className="shout" style={{ fontSize: "clamp(60px, 10vw, 130px)", color: "#fff", margin: "0 0 24px", lineHeight: 0.88 }}>
         {headline}
       </h1>
-      <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 20, lineHeight: 1.4, color: "rgba(255,255,255,0.82)", maxWidth: 480, margin: "0 0 32px" }}>
-        Quarter-pound fresh beef, smashed on a flat-top. Potato bun. Ugly Sauce. No pretty burgers.
+      <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 20, lineHeight: 1.4, color: "rgba(255,255,255,0.82)", maxWidth: 480, margin: "0 0 24px" }}>
+        Quarter-pound fresh beef, smashed on a flat-top. Potato bun. Our secret Ugly Sauce — we won't bottle it, and we're not sharing the recipe. For anyone who thinks the best burger doesn't need to be pretty.
       </p>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-        <button className="btn-primary" style={{ background: "var(--accent)", color: "#fff" }}>Order Online →</button>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
+        <button className="btn-primary" onClick={openOrder} style={{ background: "var(--accent)", color: "#fff" }}>Order Online →</button>
         <button
           className="btn-ghost"
           onClick={() => navigate('menu')}
@@ -219,8 +223,17 @@ const HeroSection = ({ headline, navigate }) => (
           See the menu →
         </button>
       </div>
+      <div style={{ marginBottom: 16 }}>
+        <button
+          onClick={() => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' })}
+          aria-label="Read our Google reviews"
+          style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "rgba(255,255,255,0.75)" }}
+        >
+          ⭐ 4.8 on Google · 143 reviews ↓
+        </button>
+      </div>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {["Counter service", "Open daily 11–9", "Shoreline WA"].map(t => (
+        {["Burgers from $9", "Open daily 11–9", "Shoreline WA"].map(t => (
           <span key={t} className="chip" style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.75)" }}>{t}</span>
         ))}
       </div>
@@ -265,14 +278,14 @@ const PageHero = ({ title, subtitle, image, eyebrow }) => (
 
 // ===== PHOTO GALLERY =====
 const PHOTOS = [
-  { src: "o.jpg",      label: "THE BURGER" },
-  { src: "o (1).jpg",  label: "THE SAUCE" },
-  { src: "o (2).jpg",  label: "THE FRIES" },
-  { src: "o (3).jpg",  label: "THE KITCHEN" },
-  { src: "o (4).jpg",  label: "THE SETUP" },
-  { src: "o (5).jpg",  label: "THE BUN" },
-  { src: "o (6).jpg",  label: "THE MELT" },
-  { src: "o (11).jpg", label: "THE VERDICT" },
+  { src: "o.jpg",      label: "THE BURGER",  alt: "A smashburger with melted American cheese and Ugly Sauce on a soft potato bun" },
+  { src: "o (1).jpg",  label: "THE SAUCE",   alt: "Ugly Sauce — Ugly Burger's secret house sauce drizzled over a freshly assembled smashburger" },
+  { src: "o (2).jpg",  label: "THE FRIES",   alt: "Golden garlic fries, a fan-favorite side at Ugly Burger in Shoreline WA" },
+  { src: "o (3).jpg",  label: "THE KITCHEN", alt: "The Ugly Burger flat-top grill in action" },
+  { src: "o (4).jpg",  label: "THE SETUP",   alt: "Counter-service setup inside Ugly Burger on Ballinger Way, Shoreline" },
+  { src: "o (5).jpg",  label: "THE BUN",     alt: "A soft potato bun ready for a quarter-pound smashburger patty" },
+  { src: "o (6).jpg",  label: "THE MELT",    alt: "American cheese melting over a sizzling smashburger patty on the flat-top" },
+  { src: "o (11).jpg", label: "THE VERDICT", alt: "A fully loaded Ugly Burger — the signature smashburger with all toppings" },
 ];
 
 const PhotoGallery = () => (
@@ -298,7 +311,7 @@ const PhotoGallery = () => (
         {PHOTOS.map((p, i) => (
           <div key={i} className="pg-cell" style={{ "--tilt": `${(i % 2 === 0 ? 1 : -1) * 1.5}deg` }}>
             <div className="pg-img-wrap">
-              <img src={p.src} alt={p.label} loading="lazy" />
+              <img src={p.src} alt={p.alt} loading="lazy" />
             </div>
             <div className="pg-label">{p.label}</div>
           </div>
@@ -586,7 +599,7 @@ const OrderBar = () => (
       >
         Call (206) 555-1234
       </a>
-      <button className="btn-primary" style={{ background: "var(--accent)", color: "#fff", padding: "14px 20px", fontSize: 12 }}>
+      <button className="btn-primary" onClick={openOrder} style={{ background: "var(--accent)", color: "#fff", padding: "14px 20px", fontSize: 12 }}>
         Order Online →
       </button>
     </div>

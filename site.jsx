@@ -276,6 +276,31 @@ const PageHero = ({ title, subtitle, image, eyebrow }) => (
   </div>
 );
 
+// ===== DIFFERENTIATOR STRIP =====
+const DifferentiatorStrip = () => {
+  const items = [
+    { label: "※ THE BEEF",   title: "Never frozen",   desc: "Quarter-pound fresh beef, every burger, every order." },
+    { label: "※ THE METHOD", title: "Flat-top smashed", desc: "Smashed hard, crust on the outside, juice on the inside." },
+    { label: "※ THE BUN",    title: "Potato bun",     desc: "Soft, slightly sweet. Holds up. Doesn't compete." },
+    { label: "※ THE SAUCE",  title: "Ugly Sauce",     desc: "Our secret. We've been asked to bottle it. We won't." },
+  ];
+  return (
+    <section style={{ borderBottom: "1.5px solid var(--ink)", background: "var(--bg-alt)" }}>
+      <div className="container" style={{ padding: 0, maxWidth: "none" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", borderLeft: "1.5px solid var(--ink)" }}>
+          {items.map((item, i) => (
+            <div key={i} style={{ padding: "40px 32px", borderRight: "1.5px solid var(--ink)" }}>
+              <div className="eyebrow" style={{ marginBottom: 12 }}>{item.label}</div>
+              <div className="shout" style={{ fontSize: "clamp(26px, 2.8vw, 38px)", color: "var(--ink)", margin: "0 0 12px" }}>{item.title}</div>
+              <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 15, lineHeight: 1.5, color: "var(--ink-soft)", margin: 0 }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // ===== PHOTO GALLERY =====
 const PHOTOS = [
   { src: "o.jpg",      label: "THE BURGER",  alt: "A smashburger with melted American cheese and Ugly Sauce on a soft potato bun" },
@@ -538,8 +563,15 @@ const VisitSection = () => {
               Shoreline, WA 98155
             </p>
             <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
-              <button className="btn-primary" style={{ background: "var(--accent)", color: "var(--ink)" }}>Get directions →</button>
-              <button className="btn-ghost" style={{ borderColor: "var(--bg)", color: "var(--bg)" }}>Send to phone</button>
+              <a
+                href="https://maps.google.com/?q=19939+Ballinger+Way+NE+B,+Shoreline,+WA+98155"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={{ background: "var(--accent)", color: "#fff", textDecoration: "none" }}
+              >
+                Get directions →
+              </a>
             </div>
             <div style={{ marginTop: 32, display: "flex", gap: 8, flexWrap: "wrap" }}>
               {["DINE-IN", "TAKEOUT", "DELIVERY", "WHEELCHAIR ACCESS", "FREE PARKING"].map(t => (
@@ -624,13 +656,85 @@ const Footer = () => (
   </footer>
 );
 
+// ===== ORDER CTA =====
+const OrderCTA = ({ navigate }) => (
+  <section style={{ background: "var(--accent)", color: "#fff", padding: "72px 0", borderTop: "1.5px solid var(--ink)" }}>
+    <div className="container" style={{ textAlign: "center" }}>
+      <h2 className="shout" style={{ fontSize: "clamp(72px, 12vw, 160px)", color: "#fff", margin: "0 0 16px", lineHeight: 0.88 }}>
+        Ready?
+      </h2>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, letterSpacing: 2, textTransform: "uppercase", color: "rgba(255,255,255,0.8)", margin: "0 0 32px" }}>
+        Burgers from $9 · Open daily 11–9
+      </p>
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <button className="btn-primary" onClick={openOrder} style={{ background: "#fff", color: "var(--accent)" }}>
+          Order Online →
+        </button>
+        <button className="btn-ghost" onClick={() => navigate('menu')} style={{ borderColor: "rgba(255,255,255,0.6)", color: "#fff" }}>
+          See the menu →
+        </button>
+      </div>
+    </div>
+  </section>
+);
+
+// ===== HOME LOCATION TEASER =====
+const HomeLocationTeaser = () => (
+  <section style={{ background: "var(--ink)", color: "var(--bg)", padding: "64px 0" }}>
+    <div className="container">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 48, alignItems: "start" }}>
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 14, color: "var(--accent-2)" }}>
+            <span className="kicker-rule" style={{ borderColor: "var(--accent-2)" }}>※ FIND US</span>
+          </div>
+          <div className="shout" style={{ fontSize: "clamp(28px, 3.5vw, 48px)", margin: "0 0 20px", lineHeight: 1 }}>
+            19939 Ballinger Way NE B<br />Shoreline, WA 98155
+          </div>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a
+              href="https://maps.google.com/?q=19939+Ballinger+Way+NE+B,+Shoreline,+WA+98155"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+              style={{ background: "var(--accent)", color: "#fff", textDecoration: "none" }}
+            >
+              Get Directions →
+            </a>
+            <a
+              href="tel:+12065551234"
+              className="btn-ghost"
+              style={{ borderColor: "var(--bg)", color: "var(--bg)", textDecoration: "none" }}
+            >
+              Call us
+            </a>
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 14, color: "var(--accent-2)" }}>
+            <span className="kicker-rule" style={{ borderColor: "var(--accent-2)" }}>※ HOURS</span>
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", lineHeight: 2 }}>
+            Mon – Sun<br />11 AM – 9 PM
+          </div>
+          <div style={{ marginTop: 16, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--accent-2)" }}>
+            {IS_OPEN ? "● OPEN NOW · USUALLY A WAIT" : "○ CLOSED · OPENS 11 AM"}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 // ===== PAGE LAYOUTS =====
 const HomePage = ({ headline, navigate }) => (
   <>
     <HeroSection headline={headline} navigate={navigate} />
     <MarqueeStrip />
+    <DifferentiatorStrip />
     <PhotoGallery />
     <ReviewsWall />
+    <OrderCTA navigate={navigate} />
+    <HomeLocationTeaser />
   </>
 );
 
